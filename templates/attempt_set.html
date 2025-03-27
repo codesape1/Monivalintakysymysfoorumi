@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}Tee testi: {{ s.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ s.title }}</h2>
+<p>{{ s.description }}</p>
+
+<!-- Navigointilista ankkureilla -->
+<p><b>Kysymykset:</b>
+{% for q in questions %}
+  <a href="#q{{ q.id }}">{{ loop.index }}</a>
+{% endfor %}
+</p>
+
+<form action="/attempt_set/{{ s.id }}" method="post">
+  {% for q in questions %}
+  <div class="question" id="q{{ q.id }}">
+    <p><b>Kysymys {{ loop.index }}:</b> {{ q.question_text }}</p>
+    <p>
+      <label>
+        <input type="radio" name="question_{{ q.id }}" value="1">
+        {{ q.answer1 }}
+      </label><br>
+      <label>
+        <input type="radio" name="question_{{ q.id }}" value="2">
+        {{ q.answer2 }}
+      </label><br>
+      <label>
+        <input type="radio" name="question_{{ q.id }}" value="3">
+        {{ q.answer3 }}
+      </label>
+    </p>
+  </div>
+  {% endfor %}
+
+  <p>
+    <input type="submit" value="Lähetä vastaukset">
+  </p>
+</form>
+{% endblock %}

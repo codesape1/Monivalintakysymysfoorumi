@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}Haku{% endblock %}
+
+{% block content %}
+<h2>Haku</h2>
+<form action="/search" method="get">
+  <p>
+    <label for="query">Hakusana</label><br>
+    <input type="text" id="query" name="query" value="{{ query }}">
+  </p>
+  <p>
+    <input type="submit" value="Hae">
+  </p>
+</form>
+
+{% if query %}
+<h3>Hakutulokset ({{ results|length }})</h3>
+{% if results %}
+  {% for item in results %}
+  <div class="set-box">
+    <h4><a href="/set/{{ item.id }}">{{ item.title }}</a></h4>
+    <p>
+      Tekijä: {{ item.username }}<br>
+      Luotu: {{ item.created_at }}
+    </p>
+    <p>{{ item.description }}</p>
+    <p><a href="/attempt_set/{{ item.id }}">Tee testi</a></p>
+  </div>
+  {% endfor %}
+{% else %}
+  <p>Ei tuloksia haulle "{{ query }}".</p>
+{% endif %}
+{% endif %}
+{% endblock %}

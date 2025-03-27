@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}Monivalintasovellus{% endblock %}</title>
+  <link rel="stylesheet" href="/static/main.css">
+</head>
+<body>
+  <div class="header">
+    <h1>Monivalintapelit</h1>
+  </div>
+
+  <div class="nav">
+    <nav>
+      <ul>
+        <li><a href="/">Etusivu</a></li>
+        <li><a href="/search">Haku</a></li>
+        {% if session.user_id %}
+        <li><a href="/new_set">Luo uusi setti</a></li>
+        <li><a href="/logout">Kirjaudu ulos</a></li>
+        {% else %}
+        <li><a href="/register">Rekisteröidy</a></li>
+        <li><a href="/login">Kirjaudu sisään</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="content">
+    {% for msg in get_flashed_messages() %}
+      <p class="info">{{ msg }}</p>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
