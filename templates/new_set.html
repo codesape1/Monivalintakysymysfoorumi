@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Uusi monivalintasetti{% endblock %}
+
+{% block content %}
+<h2>Luo uusi monivalintasetti</h2>
+<form action="/new_set" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <p>
+    <label for="title">Otsikko</label><br>
+    <input type="text" id="title" name="title" maxlength="100">
+  </p>
+  <p>
+    <label for="desc">Kuvaus</label><br>
+    <textarea id="desc" name="description" rows="4" cols="50"></textarea>
+  </p>
+  <p>
+    <input type="submit" value="Tallenna">
+  </p>
+</form>
+{% endblock %}

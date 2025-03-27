@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Rekisteröidy{% endblock %}
+
+{% block content %}
+<h2>Luo tunnus</h2>
+<form action="/register" method="post">
+  <p>
+    <label for="username">Käyttäjänimi</label><br>
+    <input type="text" id="username" name="username" value="{{ filled.username }}">
+  </p>
+  <p>
+    <label for="pw1">Salasana</label><br>
+    <input type="password" id="pw1" name="password1">
+  </p>
+  <p>
+    <label for="pw2">Salasana uudestaan</label><br>
+    <input type="password" id="pw2" name="password2">
+  </p>
+  <p>
+    <input type="submit" value="Luo tunnus">
+  </p>
+</form>
+{% endblock %}

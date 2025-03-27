@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}Tulokset - {{ s.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ s.title }}</h2>
+<p><b>Vastauksesi:</b></p>
+
+{% for r in results %}
+<div style="margin-bottom: 1em;
+            border: 1px solid #ccc;
+            padding: 0.5em;
+            background-color: {% if r.is_correct %}#b6fcb6{% else %}#fcbaba{% endif %};">
+  <p><b>Kysymys {{ loop.index }}:</b> {{ r.question_text }}</p>
+  <p>
+    1) {{ r.answer1 }}<br>
+    2) {{ r.answer2 }}<br>
+    3) {{ r.answer3 }}
+  </p>
+  <p><b>Valitsit:</b> {{ r.user_answer }}</p>
+  <p><b>Oikea vastaus:</b> {{ r.correct }}</p>
+</div>
+{% endfor %}
+
+<p><a href="/set/{{ s.id }}">Takaisin setin sivulle</a></p>
+{% endblock %}

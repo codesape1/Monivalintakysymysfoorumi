@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Etusivu{% endblock %}
+{% block content %}
+<h2>Uusimmat monivalintasetit</h2>
+
+{% for item in sets %}
+<div class="set-box">
+  <h3><a href="/set/{{ item.id }}">{{ item.title }}</a></h3>
+  <p>Luonut: {{ item.username }}<br>
+     Luotu: {{ item.created_at }}
+  </p>
+  <p>{{ item.description }}</p>
+  <p><a href="/attempt_set/{{ item.id }}">Tee testi</a></p>
+</div>
+{% endfor %}
+{% endblock %}

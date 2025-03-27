@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}{{ s.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ s.title }}</h2>
+<p>
+  Tekijä: {{ s.username }} <br>
+  Luotu: {{ s.created_at }}
+</p>
+<p>{{ s.description }}</p>
+
+<h3>Kysymykset</h3>
+<!-- Ei näytetä oikeaa vastausta heti -->
+{% for q in questions %}
+<div class="question" id="q{{ q.id }}">
+  <p><b>Kysymys:</b> {{ q.question_text }}</p>
+  <ol>
+    <li>{{ q.answer1 }}</li>
+    <li>{{ q.answer2 }}</li>
+    <li>{{ q.answer3 }}</li>
+  </ol>
+</div>
+{% endfor %}
+
+<p>
+  <a href="/attempt_set/{{ s.id }}">Tee testi</a>
+</p>
+
+{% if session.user_id == s.user_id %}
+<form action="/remove_set/{{ s.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <p>
+    <a href="/edit_set/{{ s.id }}">Muokkaa</a> &nbsp;
+    <button>Poista</button>
+  </p>
+</form>
+{% endif %}
+{% endblock %}
