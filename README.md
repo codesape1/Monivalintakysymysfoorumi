@@ -11,3 +11,6 @@ Sovelluksessa on neljä yläpalkkia: "Etusivu" (voi selata käyttäjien luomia s
 
 välipalautus 2:
 Sovelluksessa pystyy tällä hetkellä luomaan tunnuksen, kirjautumaan ja luomaan/poistamaan omia monivalintapelejä. Käyttäjien julkaisemat monivalintapelit ovat etusivulla ja niitä voi pelata myös kirjautumatta. Sovelluksessa on hakumahdollisuus, jolla voi hakea settiä nimiperustein.
+
+välipalautus 3: 
+sovellukseen on nyt lisätty uusia ominaisuuksia, jotta taulujen määrävaatimukset täyttyvät. Uudet ominaisuudet ovat settejen gategoriointi, kommentointi ja käyttäjäsivut, jossa näkee omien julkaisuiden kommentit. Aion myöhemmin parannella valikoiden ja valintojen nimityksiä helpommin ymmärrettävämmiksi ja loogisemmiksi ja mahdollisesti tehdä pieniä parannuksia käyttäjäkokemuksen parantamiseksi. 
