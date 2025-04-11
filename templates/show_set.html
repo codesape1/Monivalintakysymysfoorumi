@@ -5,12 +5,11 @@
 <h2>{{ s.title }}</h2>
 <p>
   Tekijä: {{ s.username }} <br>
-  Luotu: {{ s.created_at }}
+  Luotu: {{ s.created_at }} {% if s.category_name %} | Kategoria: {{ s.category_name }}{% endif %}
 </p>
 <p>{{ s.description }}</p>
 
 <h3>Kysymykset</h3>
-<!-- Ei näytetä oikeaa vastausta heti -->
 {% for q in questions %}
 <div class="question" id="q{{ q.id }}">
   <p><b>Kysymys:</b> {{ q.question_text }}</p>
@@ -35,4 +34,26 @@
   </p>
 </form>
 {% endif %}
+
+<h3>Kommentit</h3>
+{% for com in comments %}
+<div class="comment">
+  <p><b>{{ com.username }}</b> ({{ com.created_at }}):</p>
+  <p>{{ com.comment_text }}</p>
+</div>
+{% endfor %}
+
+{% if session.user_id %}
+<h4>Lisää kommentti:</h4>
+<form action="/add_comment/{{ s.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <p>
+    <textarea name="comment_text" rows="3" cols="50" placeholder="Kirjoita kommentti"></textarea>
+  </p>
+  <p>
+    <input type="submit" value="Lähetä kommentti">
+  </p>
+</form>
+{% endif %}
+
 {% endblock %}

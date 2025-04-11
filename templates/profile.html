@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Oma profiili{% endblock %}
+
+{% block content %}
+<h2>Oma profiili</h2>
+<h3>Omat setit ja kommentit</h3>
+{% for s in sets %}
+<div class="set-box">
+  <h3><a href="/set/{{ s.id }}">{{ s.title }}</a></h3>
+  <p>Luotu: {{ s.created_at }}{% if s.category_name %} | Kategoria: {{ s.category_name }}{% endif %}</p>
+  <p>{{ s.description }}</p>
+  {% if s.comments %}
+    <h4>Kommentit:</h4>
+    {% for com in s.comments %}
+    <div class="comment">
+      <p><b>{{ com.username }}</b> ({{ com.created_at }}): {{ com.comment_text }}</p>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p>Ei kommentteja.</p>
+  {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

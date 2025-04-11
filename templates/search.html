@@ -9,11 +9,20 @@
     <input type="text" id="query" name="query" value="{{ query }}">
   </p>
   <p>
+    <label for="category">Kategoria</label><br>
+    <select id="category" name="category">
+      <option value="">Kaikki</option>
+      {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if category and category == cat.id|string %}selected{% endif %}>{{ cat.name }}</option>
+      {% endfor %}
+    </select>
+  </p>
+  <p>
     <input type="submit" value="Hae">
   </p>
 </form>
 
-{% if query %}
+{% if query or category %}
 <h3>Hakutulokset ({{ results|length }})</h3>
 {% if results %}
   {% for item in results %}
@@ -21,7 +30,7 @@
     <h4><a href="/set/{{ item.id }}">{{ item.title }}</a></h4>
     <p>
       Tekijä: {{ item.username }}<br>
-      Luotu: {{ item.created_at }}
+      Luotu: {{ item.created_at }}{% if item.category_name %} | Kategoria: {{ item.category_name }}{% endif %}
     </p>
     <p>{{ item.description }}</p>
     <p><a href="/attempt_set/{{ item.id }}">Tee testi</a></p>

@@ -14,6 +14,14 @@
     <label for="desc">Kuvaus</label><br>
     <textarea id="desc" name="description" rows="4" cols="50">{{ s.description }}</textarea>
   </p>
+  <p>
+    <label for="category">Kategoria</label><br>
+    <select id="category" name="category_id">
+      {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if s.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+      {% endfor %}
+    </select>
+  </p>
 
   <hr>
   <h3>Lisää uusi kysymys</h3>
