@@ -1,11 +1,11 @@
 import sqlite3
 
-
 def create_tables():
     con = sqlite3.connect("database.db")
     con.execute("PRAGMA foreign_keys = ON")
     cur = con.cursor()
 
+    # ----- users -----
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
@@ -14,19 +14,19 @@ def create_tables():
     );
     """)
 
+    # ----- categories -----
     cur.execute("""
     CREATE TABLE IF NOT EXISTS categories (
         id INTEGER PRIMARY KEY,
         name TEXT UNIQUE
     );
     """)
-
-    # esimerkkikategoriat
     cur.executemany(
         "INSERT OR IGNORE INTO categories (name) VALUES (?)",
         [("Urheilu",), ("Historia",), ("Tiede",)]
     )
 
+    # ----- sets -----
     cur.execute("""
     CREATE TABLE IF NOT EXISTS sets (
         id INTEGER PRIMARY KEY,
@@ -34,10 +34,12 @@ def create_tables():
         description TEXT,
         user_id INTEGER REFERENCES users,
         category_id INTEGER REFERENCES categories,
-        created_at TEXT
+        created_at TEXT,
+        published INTEGER DEFAULT 0
     );
     """)
 
+    # ----- questions -----
     cur.execute("""
     CREATE TABLE IF NOT EXISTS questions (
         id INTEGER PRIMARY KEY,
@@ -50,6 +52,7 @@ def create_tables():
     );
     """)
 
+    # ----- comments -----
     cur.execute("""
     CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY,
@@ -63,7 +66,6 @@ def create_tables():
     con.commit()
     con.close()
     print("Taulut luotu / päivitetty.")
-
 
 if __name__ == "__main__":
     create_tables()

@@ -1,5 +1,4 @@
 -- create_tables.sql
-
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -19,7 +18,8 @@ CREATE TABLE IF NOT EXISTS sets (
     description TEXT,
     user_id INTEGER REFERENCES users,
     category_id INTEGER REFERENCES categories,
-    created_at TEXT
+    created_at TEXT,
+    published INTEGER DEFAULT 0          -- 0 = luonnos, 1 = julkaistu
 );
 
 CREATE TABLE IF NOT EXISTS questions (
