@@ -1,10 +1,11 @@
 import sqlite3
 
+
 def create_tables():
     con = sqlite3.connect("database.db")
+    con.execute("PRAGMA foreign_keys = ON")
     cur = con.cursor()
 
-    # 1. Luo users-taulu
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
@@ -13,7 +14,6 @@ def create_tables():
     );
     """)
 
-    # 2. Luo categories-taulu
     cur.execute("""
     CREATE TABLE IF NOT EXISTS categories (
         id INTEGER PRIMARY KEY,
@@ -21,13 +21,12 @@ def create_tables():
     );
     """)
 
-    # Lisää muutama esimerkkikategoria
-    categories = [("Urheilu",), ("Historia",), ("Tiede",)]
-    cur.executemany("""
-    INSERT OR IGNORE INTO categories (name) VALUES (?)
-    """, categories)
+    # esimerkkikategoriat
+    cur.executemany(
+        "INSERT OR IGNORE INTO categories (name) VALUES (?)",
+        [("Urheilu",), ("Historia",), ("Tiede",)]
+    )
 
-    # 3. Luo sets-taulu, jossa on category_id-sarake
     cur.execute("""
     CREATE TABLE IF NOT EXISTS sets (
         id INTEGER PRIMARY KEY,
@@ -39,11 +38,10 @@ def create_tables():
     );
     """)
 
-    # 4. Luo questions-taulu
     cur.execute("""
     CREATE TABLE IF NOT EXISTS questions (
         id INTEGER PRIMARY KEY,
-        set_id INTEGER REFERENCES sets,
+        set_id INTEGER REFERENCES sets(id) ON DELETE CASCADE,
         question_text TEXT,
         answer1 TEXT,
         answer2 TEXT,
@@ -52,11 +50,10 @@ def create_tables():
     );
     """)
 
-    # 5. Luo comments-taulu
     cur.execute("""
     CREATE TABLE IF NOT EXISTS comments (
         id INTEGER PRIMARY KEY,
-        set_id INTEGER REFERENCES sets,
+        set_id INTEGER REFERENCES sets(id) ON DELETE CASCADE,
         user_id INTEGER REFERENCES users,
         comment_text TEXT,
         created_at TEXT
@@ -65,7 +62,8 @@ def create_tables():
 
     con.commit()
     con.close()
-    print("Taulut luotu (tai olivat jo olemassa).")
+    print("Taulut luotu / päivitetty.")
+
 
 if __name__ == "__main__":
     create_tables()

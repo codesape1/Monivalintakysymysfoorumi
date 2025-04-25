@@ -1,5 +1,7 @@
 -- create_tables.sql
 
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
@@ -22,7 +24,7 @@ CREATE TABLE IF NOT EXISTS sets (
 
 CREATE TABLE IF NOT EXISTS questions (
     id INTEGER PRIMARY KEY,
-    set_id INTEGER REFERENCES sets,
+    set_id INTEGER REFERENCES sets(id) ON DELETE CASCADE,
     question_text TEXT,
     answer1 TEXT,
     answer2 TEXT,
@@ -32,7 +34,7 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY,
-    set_id INTEGER REFERENCES sets,
+    set_id INTEGER REFERENCES sets(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users,
     comment_text TEXT,
     created_at TEXT

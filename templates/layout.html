@@ -15,13 +15,27 @@
       <ul>
         <li><a href="/">Etusivu</a></li>
         <li><a href="/search">Haku</a></li>
+
         {% if session.user_id %}
-        <li><a href="/new_set">Luo uusi setti</a></li>
-        <li><a href="/profile">Oma profiili</a></li>
-        <li><a href="/logout">Kirjaudu ulos</a></li>
+          <li><a href="/new_set">Luo uusi setti</a></li>
+          <li><a href="/profile">Oma profiili</a></li>
+
+          <!-- Näytä kirjautuneen käyttäjän nimi -->
+          <li>Hei, {{ session.username }}!</li>
+
+          <!-- CSRF-suojattu uloskirjautuminen -->
+          <li>
+            <form action="/logout" method="post" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+              <button style="background:none;border:none;padding:0;cursor:pointer;
+                             text-decoration:underline;color:inherit;">
+                Kirjaudu ulos
+              </button>
+            </form>
+          </li>
         {% else %}
-        <li><a href="/register">Rekisteröidy</a></li>
-        <li><a href="/login">Kirjaudu sisään</a></li>
+          <li><a href="/register">Rekisteröidy</a></li>
+          <li><a href="/login">Kirjaudu sisään</a></li>
         {% endif %}
       </ul>
     </nav>
