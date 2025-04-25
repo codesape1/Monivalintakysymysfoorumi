@@ -5,24 +5,28 @@
 <h2>Luo uusi monivalintatesti</h2>
 <form action="/new_set" method="post">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
   <p>
     <label for="title">Otsikko</label><br>
-    <input type="text" id="title" name="title" maxlength="100">
+    <input type="text" id="title" name="title" maxlength="100" required>
   </p>
+
   <p>
     <label for="desc">Kuvaus</label><br>
-    <textarea id="desc" name="description" rows="4" cols="50"></textarea>
+    <textarea id="desc" name="description" rows="4" cols="50" required></textarea>
   </p>
+
   <p>
     <label for="category">Kategoria</label><br>
-    <select id="category" name="category_id">
+    <select id="category" name="category_id" required>
       {% for cat in categories %}
         <option value="{{ cat.id }}">{{ cat.name }}</option>
       {% endfor %}
     </select>
   </p>
+
   <p>
-    <input type="submit" value="Tallenna">
+    <input type="submit" value="Jatka">
   </p>
 </form>
 {% endblock %}
