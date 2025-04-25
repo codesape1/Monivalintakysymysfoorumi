@@ -62,11 +62,9 @@ def list_sets():
                        LEFT JOIN categories c ON s.category_id=c.id
                        ORDER BY s.id DESC""")
 
-
 def update_set(set_id, title, description, category_id):
     db.execute("UPDATE sets SET title=?, description=?, category_id=? WHERE id=?",
                [title, description, category_id, set_id])
-
 
 def delete_set(set_id):
     try:
@@ -75,7 +73,6 @@ def delete_set(set_id):
         db.execute("DELETE FROM questions WHERE set_id=?", [set_id])
         db.execute("DELETE FROM comments  WHERE set_id=?", [set_id])
         db.execute("DELETE FROM sets      WHERE id=?",    [set_id])
-
 
 def search_sets(keyword, category):
     param = f"%{keyword}%"
@@ -98,21 +95,17 @@ def add_question(set_id, qtext, a1, a2, a3, correct):
                 VALUES (?, ?, ?, ?, ?, ?)""",
                [set_id, qtext, a1, a2, a3, correct])
 
-
 def get_questions(set_id):
     return db.query("""SELECT * FROM questions WHERE set_id=?""", [set_id])
-
 
 def get_question(question_id):
     rows = db.query("SELECT * FROM questions WHERE id=?", [question_id])
     return rows[0] if rows else None
 
-
 def update_question(question_id, qtext, a1, a2, a3, correct):
     db.execute("""UPDATE questions SET question_text=?, answer1=?, answer2=?,
                   answer3=?, correct_answer=? WHERE id=?""",
                [qtext, a1, a2, a3, correct, question_id])
-
 
 def delete_question(question_id):
     db.execute("DELETE FROM questions WHERE id=?", [question_id])
@@ -123,7 +116,6 @@ def get_comments_for_set(set_id):
                        FROM comments cm JOIN users u ON cm.user_id=u.id
                        WHERE cm.set_id=? ORDER BY cm.created_at DESC""",
                     [set_id])
-
 
 def get_user_sets(user_id):
     return db.query("""SELECT s.*, c.name AS category_name
@@ -220,24 +212,34 @@ def edit_set(set_id):
                                questions=get_questions(set_id))
 
     check_csrf(request.form["csrf_token"])
-    update_set(set_id, request.form["title"],
-               request.form["description"],
-               request.form.get("category_id"))
 
-    # lisää uusi kysymys?
-    qtext = request.form["question_text"].strip()
-    if qtext:
-        a1, a2, a3 = (request.form[k] for k in ("answer1", "answer2", "answer3"))
-        try:
-            correct = int(request.form["correct"])
-            if 1 <= correct <= 3:
-                add_question(set_id, qtext, a1, a2, a3, correct)
-                flash("Kysymys lisätty.")
-            else:
-                flash("Virhe: oikea vastaus on 1–3.")
-        except ValueError:
-            flash("Virheellinen arvo kentässä 'Oikea vastaus'.")
-    flash("Testi päivitetty.")
+    # Mitä lomaketta painettiin?
+    mode = request.form.get("mode", "update_set")
+
+    if mode == "update_set":
+        update_set(set_id,
+                   request.form["title"],
+                   request.form["description"],
+                   request.form.get("category_id"))
+        flash("Testi päivitetty.")
+        return redirect(f"/edit_set/{set_id}")
+
+    # mode == add_question
+    qtext = request.form.get("question_text", "").strip()  # <-- turvallinen haku
+    if not qtext:
+        flash("Kysymysteksti puuttuu.")
+        return redirect(f"/edit_set/{set_id}")
+
+    a1, a2, a3 = (request.form[k] for k in ("answer1", "answer2", "answer3"))
+    try:
+        correct = int(request.form["correct"])
+        if 1 <= correct <= 3:
+            add_question(set_id, qtext, a1, a2, a3, correct)
+            flash("Kysymys lisätty.")
+        else:
+            flash("Virhe: oikea vastaus on 1–3.")
+    except ValueError:
+        flash("Virheellinen arvo kentässä 'Oikea vastaus'.")
     return redirect(f"/edit_set/{set_id}")
 
 # ---- yksittäisen kysymyksen päivitys ----
@@ -282,7 +284,7 @@ def delete_question_route(question_id):
     flash("Kysymys poistettu.")
     return redirect(f"/edit_set/{q['set_id']}")
 
-# ---------- poisto, haku, attempt, profiili (sama logiikka) ----------
+# ---------- poisto, haku, attempt, profiili ----------
 @app.route("/remove_set/<int:set_id>", methods=["POST"])
 def remove_set(set_id):
     require_login()
