@@ -13,7 +13,6 @@ def require_login():
     if "user_id" not in session:
         abort(403)
 
-
 def check_csrf(form_token):
     if form_token != session.get("csrf_token"):
         abort(403)
@@ -27,7 +26,6 @@ def create_user(username, password):
         return True
     except Exception:
         return False
-
 
 def check_login(username, password):
     rows = db.query("SELECT id, password_hash FROM users WHERE username=?", [username])
@@ -45,7 +43,6 @@ def create_set(user_id, title, description, category_id):
                      created_at) VALUES (?, ?, ?, ?, datetime('now'))""",
                       [title, description, user_id, category_id])
 
-
 def get_set(set_id):
     rows = db.query("""SELECT s.*, c.name AS category_name, u.username
                        FROM sets s
@@ -53,7 +50,6 @@ def get_set(set_id):
                        JOIN users u ON s.user_id=u.id
                        WHERE s.id=?""", [set_id])
     return rows[0] if rows else None
-
 
 def list_sets():
     return db.query("""SELECT s.*, c.name AS category_name, u.username
@@ -147,7 +143,6 @@ def register():
     flash("Tunnus luotu! Voit kirjautua.")
     return redirect("/login")
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -162,7 +157,6 @@ def login():
         return redirect(request.form.get("next_page") or "/")
     flash("Väärä tunnus tai salasana.")
     return render_template("login.html", next_page=request.referrer)
-
 
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -188,7 +182,6 @@ def new_set():
     flash("Uusi testi luotu. Voit lisätä kysymyksiä.")
     return redirect(f"/edit_set/{set_id}")
 
-
 @app.route("/set/<int:set_id>")
 def show_set(set_id):
     s = get_set(set_id)
@@ -212,10 +205,9 @@ def edit_set(set_id):
                                questions=get_questions(set_id))
 
     check_csrf(request.form["csrf_token"])
-
-    # Mitä lomaketta painettiin?
     mode = request.form.get("mode", "update_set")
 
+    # --- 1. Päivitä otsikko/kuvaus ---
     if mode == "update_set":
         update_set(set_id,
                    request.form["title"],
@@ -224,22 +216,29 @@ def edit_set(set_id):
         flash("Testi päivitetty.")
         return redirect(f"/edit_set/{set_id}")
 
-    # mode == add_question
-    qtext = request.form.get("question_text", "").strip()  # <-- turvallinen haku
-    if not qtext:
-        flash("Kysymysteksti puuttuu.")
+    # --- 2. Lisää uusi kysymys ---
+    qtext = request.form.get("question_text", "").strip()
+    a1    = request.form.get("answer1", "").strip()
+    a2    = request.form.get("answer2", "").strip()
+    a3    = request.form.get("answer3", "").strip()
+    correct_raw = request.form.get("correct", "").strip()
+
+    # Tarkista kenttien täyttö
+    if not (qtext and a1 and a2 and a3 and correct_raw):
+        flash("Kaikki kentät on täytettävä kysymystä lisätessä!")
         return redirect(f"/edit_set/{set_id}")
 
-    a1, a2, a3 = (request.form[k] for k in ("answer1", "answer2", "answer3"))
     try:
-        correct = int(request.form["correct"])
-        if 1 <= correct <= 3:
-            add_question(set_id, qtext, a1, a2, a3, correct)
-            flash("Kysymys lisätty.")
-        else:
-            flash("Virhe: oikea vastaus on 1–3.")
+        correct = int(correct_raw)
+        if correct not in (1, 2, 3):
+            flash("Oikean vastauksen täytyy olla 1–3.")
+            return redirect(f"/edit_set/{set_id}")
     except ValueError:
-        flash("Virheellinen arvo kentässä 'Oikea vastaus'.")
+        flash("Oikea vastaus pitää syöttää numerona (1–3).")
+        return redirect(f"/edit_set/{set_id}")
+
+    add_question(set_id, qtext, a1, a2, a3, correct)
+    flash("Kysymys lisätty.")
     return redirect(f"/edit_set/{set_id}")
 
 # ---- yksittäisen kysymyksen päivitys ----
@@ -255,9 +254,15 @@ def update_question_route(question_id):
         abort(403)
 
     qtext = request.form["question_text"].strip()
-    a1 = request.form["answer1"]
-    a2 = request.form["answer2"]
-    a3 = request.form["answer3"]
+    a1 = request.form["answer1"].strip()
+    a2 = request.form["answer2"].strip()
+    a3 = request.form["answer3"].strip()
+
+    # estä tyhjät arvot päivityksessä
+    if not (qtext and a1 and a2 and a3):
+        flash("Kentät eivät voi olla tyhjiä.")
+        return redirect(f"/edit_set/{q['set_id']}")
+
     try:
         correct = int(request.form["correct"])
         if correct not in (1, 2, 3):
@@ -296,7 +301,6 @@ def remove_set(set_id):
     flash("Testi poistettu.")
     return redirect("/")
 
-
 @app.route("/search")
 def search():
     query = request.args.get("query", "")
@@ -304,7 +308,6 @@ def search():
     results = search_sets(query, category) if (query or category) else []
     return render_template("search.html", query=query, category=category,
                            results=results, categories=get_categories())
-
 
 @app.route("/attempt_set/<int:set_id>", methods=["GET", "POST"])
 def attempt_set(set_id):
@@ -333,7 +336,6 @@ def attempt_set(set_id):
         })
     return render_template("attempt_results.html", s=s, results=results)
 
-
 @app.route("/add_comment/<int:set_id>", methods=["POST"])
 def add_comment(set_id):
     require_login()
@@ -348,14 +350,12 @@ def add_comment(set_id):
     flash("Kommentti lisätty.")
     return redirect(f"/set/{set_id}")
 
-
 @app.route("/profile")
 def profile():
     require_login()
     data = [dict(s, comments=get_comments_for_set(s["id"]))
             for s in get_user_sets(session["user_id"])]
     return render_template("profile.html", sets=data)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
