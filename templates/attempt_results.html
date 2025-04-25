@@ -6,20 +6,19 @@
 <p><b>Vastauksesi:</b></p>
 
 {% for r in results %}
-<div style="margin-bottom: 1em;
-            border: 1px solid #ccc;
-            padding: 0.5em;
-            background-color: {% if r.is_correct %}#b6fcb6{% else %}#fcbaba{% endif %};">
+<div class="result-box {% if r.is_correct %}result-correct{% else %}result-wrong{% endif %}">
   <p><b>Kysymys {{ loop.index }}:</b> {{ r.question_text }}</p>
   <p>
     1) {{ r.answer1 }}<br>
     2) {{ r.answer2 }}<br>
     3) {{ r.answer3 }}
   </p>
-  <p><b>Valitsit:</b> {{ r.user_answer }}</p>
+  <p><b>Valitsit:</b>
+     {% if r.user_answer == -1 %}– ei vastausta –{% else %}{{ r.user_answer }}{% endif %}
+  </p>
   <p><b>Oikea vastaus:</b> {{ r.correct }}</p>
 </div>
 {% endfor %}
 
-<p><a href="/set/{{ s.id }}">Takaisin setin sivulle</a></p>
+<p><a href="/set/{{ s.id }}">Takaisin testin sivulle</a></p>
 {% endblock %}

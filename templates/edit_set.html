@@ -2,7 +2,7 @@
 {% block title %}Muokkaa - {{ s.title }}{% endblock %}
 
 {% block content %}
-<h2>Muokkaa settiä</h2>
+<h2>Muokkaa testiä</h2>
 <form action="/edit_set/{{ s.id }}" method="post">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 

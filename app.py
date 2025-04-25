@@ -28,8 +28,10 @@ def check_csrf(form_token):
 def create_user(username, password):
     pw_hash = generate_password_hash(password)
     try:
-        db.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)",
-                   [username, pw_hash])
+        db.execute(
+            "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+            [username, pw_hash],
+        )
         return True
     except Exception:
         return False
@@ -45,14 +47,14 @@ def check_login(username, password):
 
 
 # ──────────────────────────────────────────────────────────────
-# Luokat
+# Kategoriat
 # ──────────────────────────────────────────────────────────────
 def get_categories():
     return db.query("SELECT id, name FROM categories ORDER BY name")
 
 
 # ──────────────────────────────────────────────────────────────
-# Sets
+# Testit (sets)
 # ──────────────────────────────────────────────────────────────
 def create_set(user_id, title, description, category_id):
     return db.execute(
@@ -94,12 +96,10 @@ def update_set(set_id, title, description, category_id):
 
 
 def delete_set(set_id):
-    """Yritä poistaa setti kerralla. Jos viiteavain estää operaation,
-    poista ensin kysymykset ja kommentit ja kokeile uudestaan."""
+    """Poista testi. Toimii sekä CASCADE-kannassa että vanhassa rakenteessa."""
     try:
         db.execute("DELETE FROM sets WHERE id=?", [set_id])
     except sqlite3.IntegrityError:
-        # Vanha tietokanta ilman ON DELETE CASCADEa
         db.execute("DELETE FROM questions WHERE set_id=?", [set_id])
         db.execute("DELETE FROM comments WHERE set_id=?", [set_id])
         db.execute("DELETE FROM sets WHERE id=?", [set_id])
@@ -247,7 +247,7 @@ def new_set():
         return redirect("/new_set")
 
     set_id = create_set(session["user_id"], title, desc, category_id)
-    flash("Uusi setti luotu. Voit lisätä kysymyksiä.")
+    flash("Uusi testi luotu. Voit lisätä kysymyksiä.")
     return redirect(f"/edit_set/{set_id}")
 
 
@@ -296,7 +296,7 @@ def edit_set(set_id):
         except ValueError:
             flash("Virheellinen arvo kentässä 'Oikea vastaus'.")
 
-    flash("Setti päivitetty.")
+    flash("Testi päivitetty.")
     return redirect(f"/edit_set/{set_id}")
 
 
@@ -308,7 +308,7 @@ def remove_set(set_id):
     if not s or s["user_id"] != session["user_id"]:
         abort(404 if not s else 403)
     delete_set(set_id)
-    flash("Setti poistettu.")
+    flash("Testi poistettu.")
     return redirect("/")
 
 

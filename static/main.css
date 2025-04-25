@@ -58,3 +58,18 @@ body {
   margin: 0.5em 0;
   background-color: #eef;
 }
+
+/* ───── Attempt-results värit ───── */
+.result-box {
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  padding: 0.5em;
+}
+
+.result-correct {
+  background-color: #b6fcb6;   /* vihreä */
+}
+
+.result-wrong {
+  background-color: #fcbaba;   /* punainen */
+}

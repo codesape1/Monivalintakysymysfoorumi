@@ -7,7 +7,7 @@
 </head>
 <body>
   <div class="header">
-    <h1>Monivalintapelit</h1>
+    <h1>Monivalintatestit</h1>
   </div>
 
   <div class="nav">
@@ -17,13 +17,10 @@
         <li><a href="/search">Haku</a></li>
 
         {% if session.user_id %}
-          <li><a href="/new_set">Luo uusi setti</a></li>
+          <li><a href="/new_set">Luo uusi testi</a></li>
           <li><a href="/profile">Oma profiili</a></li>
 
-          <!-- Näytä kirjautuneen käyttäjän nimi -->
           <li>Hei, {{ session.username }}!</li>
-
-          <!-- CSRF-suojattu uloskirjautuminen -->
           <li>
             <form action="/logout" method="post" style="display:inline;">
               <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
